@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+    <style>
+      /* General Styles */
+      body, h2, div, ul, li {
+        font-family: 'Roboto', sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f7f8fa;
+        color: #333;
+      }
+
+      /* Container Styles */
+      .container {
+        background: linear-gradient(to bottom, #ffffff 0%, #f6f6f6 100%);
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 20px;
+        max-width: 400px;
+        margin: 20px auto;
+        border: 1px solid #e1e4e8; /* subtle border */
+      }
+
+      /* Heading Styles */
+      h2 {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #FF7A00; /* Changed to orange */
+      }
+
+      /* Progress Bar Styles */
+      .progress-bar {
+        height: 5px;
+        background: #e1e4e8;
+        border-radius: 3px;
+        position: relative;
+      }
+
+      .progress-bar::after {
+        content: '';
+        display: block;
+        height: 5px;
+        background: linear-gradient(to right, #007bff 0%, #4fc3f7 100%);
+        animation: loading 2s linear infinite;
+        border-radius: 3px;
+      }
+
+      /* Response Styles */
+      .response {
+        background: #fff; /* Slight contrast from container */
+        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); /* Subtle inner shadow */
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+        border: 1px solid #e1e4e8; /* Subtle border */
+      }
+
+      /* Error Message Styles */
+      .error-message {
+        color: #d9534f;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      /* Keyframes for loading animation */
+      @keyframes loading {
+        0% { width: 0; left: 0; }
+        50% { width: 100%; left: 0; }
+        100% { width: 0; left: 100%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Startup Financial Model Analysis</h2>
+      <!-- Progress bar to show loading state -->
+      <div class="progress-bar"></div>
+      <div id="response" class="response">
+        <!-- Response will be injected here -->
+        <p>Loading financial insights...</p>
+      </div>
+    </div>
+
+    <script>
+      function getApiResponse() {
+        google.script.run.withSuccessHandler(showResponse)
+                        .withFailureHandler(showError)
+                        .getGptApiResponse();
+      }
+
+      function showResponse(response) {
+        var responseContainer = document.getElementById('response');
+        responseContainer.innerHTML = ''; // Clear previous content
+        if (response) {
+          // Directly append the response
+          responseContainer.innerHTML = response;
+        } else {
+          responseContainer.innerHTML = '<p class="error-message">No insights available. Please try again.</p>';
+        }
+        document.querySelector('.progress-bar').style.display = 'none'; // Hide progress bar
+      }
+
+      function showError(error) {
+        var responseContainer = document.getElementById('response');
+        responseContainer.innerHTML = '<p class="error-message">Error: ' + error + '</p>';
+        document.querySelector('.progress-bar').style.display = 'none'; // Hide progress bar
+      }
+
+      window.onload = getApiResponse; // Trigger API call when sidebar loads
+    </script>
+  </body>
+</html>
