@@ -1,0 +1,26 @@
+{
+  "timeZone": "America/New_York",
+  "exceptionLogging": "STACKDRIVER",
+  "runtimeVersion": "V8",
+  "oauthScopes": [
+    "https://www.googleapis.com/auth/spreadsheets.currentonly",
+    "https://www.googleapis.com/auth/script.container.ui",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email"
+  ],
+  "addOns": {
+    "common": {
+      "name": "Financial Model GPT",
+      "logoUrl": "https://ibb.co/w7KKBdJ",
+      "layoutProperties": {
+        "primaryColor": "#2762EA",
+        "secondaryColor": "#E8EAED"
+      },
+      "useLocaleFromApp": true,
+      "homepageTrigger": {
+        "runFunction": "myFunction"
+      }
+    }
+  }
+}
