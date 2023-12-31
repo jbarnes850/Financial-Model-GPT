@@ -204,7 +204,6 @@ button:hover {
     </div>
 
 <script>
-// Debouncing utility function
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -217,56 +216,44 @@ function debounce(func, wait) {
     };
 }
 
-// Function to handle the API response (with added comments and const)
-function showResponse(response) {
-    // Get the response container element
-    const responseContainer = document.getElementById('response');
-
-    // Display the response or a default message if no response is available
-    responseContainer.innerHTML = response || 'No insights available. Please try again.';
-
-    // Hide the progress bar
-    document.querySelector('.progress-bar').style.display = 'none';
-
-    // If a response is received, create and append a success indicator
-    if (response) {
-        const successIndicator = document.createElement('div');
-        successIndicator.className = 'success-indicator';
-        successIndicator.innerHTML = '<img src="checkmark-icon.png" alt="Success" /><p>Analysis completed successfully!</p>';
-        responseContainer.appendChild(successIndicator);
+    // This function handles the successful response from the server-side script.
+    function showResponse(response) {
+        const responseContainer = document.getElementById('response');
+        responseContainer.innerHTML = response || 'No insights available. Please try again.';
+        // Hide the progress bar to indicate loading is complete.
+        document.querySelector('.progress-bar').style.display = 'none';
+        // Add success indicator only if there is a response.
+        if (response) {
+            const successIndicator = document.createElement('div');
+            successIndicator.className = 'success-indicator';
+            successIndicator.innerHTML = '<img src="checkmark-icon.png" alt="Success" /><p>Analysis completed successfully!</p>';
+            responseContainer.appendChild(successIndicator);
+        }
     }
-}
 
-// Function to handle errors from the API (with detailed error logging and potential message refinement)
-function showError(error) {
-    // Log detailed error information for debugging
-    console.error('API error:', error);
+    // This function handles errors from the server-side script.
+    function showError(error) {
+        console.error('API error:', error);
+        const errorMessage = error.message || "An unexpected error occurred. Please try again.";
+        const responseContainer = document.getElementById('response');
+        responseContainer.innerHTML = `<p class="error-message">Error: ${errorMessage}</p>`;
+        // Hide the progress bar since an error occurred and loading is complete.
+        document.querySelector('.progress-bar').style.display = 'none';
+    }
 
-    // Extract a user-friendly error message (consider refining based on error type)
-    const errorMessage = error.message || "An unexpected error occurred. Please try again.";
+    // This debounced function calls the server-side function to start the financial analysis.
+    const debouncedStartAnalysis = debounce(function() {
+        google.script.run
+            .withSuccessHandler(showResponse) // Set showResponse as the success handler.
+            .withFailureHandler(showError) // Set showError as the failure handler.
+            .startFinancialAnalysis(); // Ensure this matches the server-side function name.
+    }, 300);
 
-    // Display the error message in the response container
-    const responseContainer = document.getElementById('response');
-    responseContainer.innerHTML = `<p class="error-message">Error: ${errorMessage}</p>`;
-
-    // Hide the progress bar
-    document.querySelector('.progress-bar').style.display = 'none';
-}
-
-// Event listener for the button to start the analysis (unchanged)
-document.getElementById('startAnalysisButton').addEventListener('click', function() {
-    document.querySelector('.progress-bar').style.display = 'block';
-    debouncedGetApiResponse();
-});
-
-// Debounced API call (unchanged)
-const debouncedGetApiResponse = debounce(function() {
-    google.script.run
-        .withSuccessHandler(showResponse)
-        .withFailureHandler(showError)
-        .startFinancialAnalysis();
-}, 300);
-
-</script>
+    // This event listener is attached to the "Start Analysis" button.
+    document.getElementById('startAnalysisButton').addEventListener('click', function() {
+        document.querySelector('.progress-bar').style.display = 'block'; // Show the progress bar indicating loading.
+        debouncedStartAnalysis(); // Call the debounced function to start the analysis.
+    });
+    </script>
 </body>
 </html>
