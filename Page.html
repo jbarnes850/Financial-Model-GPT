@@ -1,117 +1,272 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base target="_top">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Startup Financial Model Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/9ce6df9838.js" crossorigin="anonymous"></script>
     <style>
-      /* General Styles */
-      body, h2, div, ul, li {
-        font-family: 'Roboto', sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f7f8fa;
-        color: #333;
-      }
+      /* Base and General Styles */
+body, h2, div, ol, li, p, button {
+    font-family: 'Space Grotesk', sans-serif; /* Using Space Grotesk font for brand consistency */
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
 
-      /* Container Styles */
-      .container {
-        background: linear-gradient(to bottom, #ffffff 0%, #f6f6f6 100%);
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        padding: 20px;
-        max-width: 400px;
-        margin: 20px auto;
-        border: 1px solid #e1e4e8; /* subtle border */
-      }
+body {
+    background-color: #f5f6f8;
+    line-height: 1.6;
+    font-size: 16px;
+}
 
-      /* Heading Styles */
-      h2 {
-        font-size: 24px;
-        font-weight: 500;
-        margin-bottom: 20px;
-        text-align: center;
-        color: #FF7A00; /* Changed to orange */
-      }
+/* Brand Logo Styles */
+.brand-logo {
+    text-align: center;
+    padding-top: 20px;
+}
 
-      /* Progress Bar Styles */
-      .progress-bar {
-        height: 5px;
-        background: #e1e4e8;
-        border-radius: 3px;
-        position: relative;
-      }
+.logo {
+    max-width: 100px;
+    width: auto;
+    height: auto;
+    display: block; 
+    margin-left: auto; 
+    margin-right: auto;
+}
 
-      .progress-bar::after {
-        content: '';
-        display: block;
-        height: 5px;
-        background: linear-gradient(to right, #007bff 0%, #4fc3f7 100%);
-        animation: loading 2s linear infinite;
-        border-radius: 3px;
-      }
+/* Container */
+.container {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    max-width: 400px;
+    margin: 20px auto; 
+    border: 1px solid #e1e4e8;
+}
 
-      /* Response Styles */
-      .response {
-        background: #fff; /* Slight contrast from container */
-        box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); /* Subtle inner shadow */
-        border-radius: 8px;
-        padding: 20px;
-        margin-top: 20px;
-        border: 1px solid #e1e4e8; /* Subtle border */
-      }
+/* Heading */
+h2 {
+    font-size: 20px; 
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #FF7A00;
+}
 
-      /* Error Message Styles */
-      .error-message {
-        color: #d9534f;
-        font-weight: bold;
-        text-align: center;
-      }
+/* Text Styles */
+p, li {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 
-      /* Keyframes for loading animation */
-      @keyframes loading {
-        0% { width: 0; left: 0; }
-        50% { width: 100%; left: 0; }
-        100% { width: 0; left: 100%; }
-      }
+/* List */
+ol {
+    margin-left: 20px;
+    list-style: none;
+}
+
+ol li::before {
+    content: ''; 
+}
+
+/* Icons */
+.fa-circle-check, .fa-wand-magic-sparkles {
+    margin-right: 8px;
+    color: #FF7A00;
+}
+
+/* Button */
+button {
+    background-color: #FF7A00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #e67e22;
+    transform: scale(1.02); 
+}
+
+/* Progress Bar */
+.progress-bar {
+    height: 5px;
+    background: #e1e4e8;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    background: #FF7A00;
+    animation: loading 2s ease-out infinite;
+    width: 50%;
+}
+
+/* Animation for Progress Bar */
+@keyframes loading {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Error and Response Message Styles */
+.error-message, .response {
+    background: #f9f9f9;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 20px;
+    border: 1px solid #e1e4e8;
+    max-height: 300px;
+    min-height: 100px;
+    overflow-y: auto; 
+    word-break: break-word;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: #d9534f;
+    font-weight: 500;
+}
+
+/* Start Analysis Prompt Enhancement */
+.start-prompt {
+    color: #333;
+    font-weight: 500;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 10px;
+    transition: opacity 0.3s ease;
+}
+/* Analysis Response Styles */
+    #analysis-container {
+      margin-top: 20px;
+      border: 1px solid #e1e4e8; /* Add a border to visually separate the analysis content */
+      padding: 20px; /* Add padding for visual breathing room */
+    }
+
+    #analysis-content {
+      font-size: 15px; /* Slightly smaller font for readability */
+      line-height: 1.7; /* Increased line height for better spacing */
+      color: #333; /* Darker text color for contrast */
+    }
+
+    #analysis-content h3 {
+      font-size: 16px; /* Slightly larger font for headings */
+      font-weight: 500; /* Bolder weight for emphasis */
+      margin-top: 20px; /* Add spacing between sections */
+    }
+
+    #analysis-actions {
+      text-align: center;
+      margin-top: 15px; /* Add spacing above the buttons */
+    }
+
+    #analysis-actions button {
+      margin-right: 10px; /* Space out the buttons slightly */
+    }
     </style>
-  </head>
-  <body>
-    <div class="container">
-      <h2>Startup Financial Model Analysis</h2>
-      <!-- Progress bar to show loading state -->
-      <div class="progress-bar"></div>
-      <div id="response" class="response">
-        <!-- Response will be injected here -->
-        <p>Loading financial insights...</p>
-      </div>
+</head>
+<body>
+     <div class="brand-logo">
+        <a href="https://mach10.us/" target="_blank">
+            <img src="https://i.ibb.co/wJ0qs6b/Group-1.png" alt="Mach10 Logo" class="logo">
+        </a>
     </div>
 
-    <script>
-      function getApiResponse() {
-        google.script.run.withSuccessHandler(showResponse)
-                        .withFailureHandler(showError)
-                        .getGptApiResponse();
-      }
+    <div class="container">
+        <h2>Startup Financial Model Analysis</h2>
+        <div class="instructions">
+            <p>To analyze your financial model:</p>
+            <ol>
+                <li><i class="fa-solid fa-circle-check"></i> Ensure the "Forecast Dashboard" sheet contains accurate data.</li>
+                <li><i class="fa-solid fa-wand-magic-sparkles"></i> Click the "Start Analysis" button below.</li>
+            </ol>
+            <p>If an error occurs, please check the data and try again.</p>
+        </div>
+        <div class="progress-bar"></div>
+        <div id="response" class="response">
+            <p class="start-prompt">Click "Start Analysis" to unlock real-time insights.</p>
+        </div>
+        <button id="startAnalysisButton">Start Analysis</button>
+    </div>
 
-      function showResponse(response) {
-        var responseContainer = document.getElementById('response');
-        responseContainer.innerHTML = ''; // Clear previous content
-        if (response) {
-          // Directly append the response
-          responseContainer.innerHTML = response;
-        } else {
-          responseContainer.innerHTML = '<p class="error-message">No insights available. Please try again.</p>';
-        }
-        document.querySelector('.progress-bar').style.display = 'none'; // Hide progress bar
-      }
+<script>
+// Debouncing utility function
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
 
-      function showError(error) {
-        var responseContainer = document.getElementById('response');
-        responseContainer.innerHTML = '<p class="error-message">Error: ' + error + '</p>';
-        document.querySelector('.progress-bar').style.display = 'none'; // Hide progress bar
-      }
+// Function to handle the API response (with added comments and const)
+function showResponse(response) {
+    // Get the response container element
+    const responseContainer = document.getElementById('response');
 
-      window.onload = getApiResponse; // Trigger API call when sidebar loads
-    </script>
-  </body>
+    // Display the response or a default message if no response is available
+    responseContainer.innerHTML = response || 'No insights available. Please try again.';
+
+    // Hide the progress bar
+    document.querySelector('.progress-bar').style.display = 'none';
+
+    // If a response is received, create and append a success indicator
+    if (response) {
+        const successIndicator = document.createElement('div');
+        successIndicator.className = 'success-indicator';
+        successIndicator.innerHTML = '<img src="checkmark-icon.png" alt="Success" /><p>Analysis completed successfully!</p>';
+        responseContainer.appendChild(successIndicator);
+    }
+}
+
+// Function to handle errors from the API (with detailed error logging and potential message refinement)
+function showError(error) {
+    // Log detailed error information for debugging
+    console.error('API error:', error);
+
+    // Extract a user-friendly error message (consider refining based on error type)
+    const errorMessage = error.message || "An unexpected error occurred. Please try again.";
+
+    // Display the error message in the response container
+    const responseContainer = document.getElementById('response');
+    responseContainer.innerHTML = `<p class="error-message">Error: ${errorMessage}</p>`;
+
+    // Hide the progress bar
+    document.querySelector('.progress-bar').style.display = 'none';
+}
+
+// Event listener for the button to start the analysis (unchanged)
+document.getElementById('startAnalysisButton').addEventListener('click', function() {
+    document.querySelector('.progress-bar').style.display = 'block';
+    debouncedGetApiResponse();
+});
+
+// Debounced API call (unchanged)
+const debouncedGetApiResponse = debounce(function() {
+    google.script.run
+        .withSuccessHandler(showResponse)
+        .withFailureHandler(showError)
+        .startFinancialAnalysis();
+}, 300);
+
+</script>
+</body>
 </html>
