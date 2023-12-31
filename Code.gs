@@ -146,7 +146,7 @@ function constructPrompt(financialModelData) {
     `1. Analyze the startup's financial health, considering the revenue, margins, burn rate, and retention metrics.\n` +
     `2. Evaluate the startup's growth trajectory and investment efficiency, taking into account the revenue growth rate, burn multiple, and runway.\n` +
     `3. Provide concise strategic recommendations for optimizing the startup's financial model and improving key metrics to better align with successful industry standards.\n\n` +
-    `Be kind but direct and encouraging. Deliver your analysis with actionable insights and detailed suggestions based on the provided data and industry benchmarks.`;
+    `Be kind and encouraging. Write as if you are writing to a fellow founder. Deliver your analysis with actionable insights and detailed suggestions based on the provided data and industry benchmarks.`;
     // Log the constructed prompt for debugging
     Logger.log("Constructed Prompt: " + prompt);
     return prompt; // Return the constructed prompt
@@ -201,16 +201,73 @@ function getGptApiResponse(prompt, successCallback, errorCallback) {
     }
 }
 
+// Add a new function to show the results in a popup
+function showResultsInPopup(result) {
+    var formattedResult = result.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+
+    var htmlContent = `
+        <style>
+            /* Popup Container Style */
+            .popup-container {
+                font-family: 'Space Grotesk', sans-serif;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border: 1px solid #e1e4e8;
+                overflow-y: auto; /* Ensures scrolling for long content */
+            }
+            
+            /* Chat Content Style */
+            .chat-content {
+                width: 100%;
+                max-height: 80vh;
+                padding: 20px;
+                border-radius: 8px;
+                background-color: #f9f9f9; /* Light grey background similar to response */
+                box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle shadow like chat GPT */
+                overflow-y: auto;
+                font-family: 'Space Grotesk', sans-serif;
+                font-size: 15px; /* Slightly smaller font for readability */
+                line-height: 1.7; /* Increased line height for better spacing */
+                color: #333; /* Darker text color for contrast */
+            }
+
+            /* Scrollbar style for chat content */
+            .chat-content::-webkit-scrollbar {
+                width: 10px;
+            }
+
+            .chat-content::-webkit-scrollbar-thumb {
+                background-color: #cccccc;
+                border-radius: 10px;
+            }
+
+            .chat-content::-webkit-scrollbar-track {
+                background-color: #f9f9f9;
+            }
+        </style>
+
+        <div class="popup-container">
+            <div class="chat-content">${formattedResult}</div>
+        </div>
+    `;
+
+    var htmlOutput = HtmlService
+        .createHtmlOutput(htmlContent)
+        .setWidth(700) // Adjust as necessary
+        .setHeight(600) // Adjust as necessary
+        .setTitle("Analysis Results");
+    SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'Analysis Results');
+}
+
 // Callback function for successful API response
 function handleApiResponse(response) {
     Logger.log("Analysis Result: " + response);
-    // Call server-side function to update sidebar
-    updateSidebarContent(response);
-}
-
-function updateSidebarContent(response) {
-    // Use google.script.run to send data to client-side
-    google.script.run.withSuccessHandler(updateSidebarClient).sendDataToSidebar(response);
+    // Call the new function to show results in the popup
+    showResultsInPopup(response);
 }
 
 // Callback function for handling API errors
