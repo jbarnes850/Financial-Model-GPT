@@ -1,7 +1,7 @@
 # Financial-Model-GPT
 
 # Overview
-The Financial Model GPT is a tool integrated within Google Sheets, leveraging the power of OpenAI's GPT-4 to provide real-time, comprehensive financial insights and actionable recommendations. Designed for startup founders, financial analysts, and decision-makers, it enables feedback on a pro forma financial model, analyzing metrics such as ARR growth, burn multiple, gross margins, and net revenue retention. Developed as part of the https://mach10.us suite of tools, it aims to empower founders to make informed decisions with speed and confidence.
+The Financial Model GPT is a tool integrated within Google Sheets, leveraging the power of OpenAI's GPT-4 to provide real-time, comprehensive financial insights and actionable recommendations. Designed for startup founders, financial analysts, and decision-makers, it enables feedback on a pro forma financial model, analyzing metrics such as ARR growth, burn multiple, gross margins, and net revenue retention. Developed as part of the **Mach10** [https://mach10.us] suite of tools, it aims to empower founders to make informed decisions with speed and confidence.
 
 # Features
 - *Dynamic Data Input*: Users can input their financial data directly into Google Sheets.
