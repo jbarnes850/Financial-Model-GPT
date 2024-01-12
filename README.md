@@ -5,7 +5,7 @@ The Financial Model GPT is a tool integrated within Google Sheets, leveraging th
 
 # Features
 - *Dynamic Data Input*: Users can input their financial data directly into Google Sheets.
-- *Real-time Analysis*: Utilizes GPT-3 to provide real-time analysis of financial health, growth potential, and benchmarking against industry standards.
+- *Real-time Analysis*: Utilizes GPT-4 to provide real-time analysis of financial health, growth potential, and benchmarking against industry standards.
 - *Actionable Insights*: Offers strategic recommendations to improve financial models and key metrics alignment with successful industry standards.
 - *Interactive UI*: A clean and user-friendly sidebar interface within Google Sheets for easy navigation and reading of insights.
 
