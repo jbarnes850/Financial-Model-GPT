@@ -83,7 +83,7 @@ button {
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 8px 16px;
+    padding: 12px 20px;
     cursor: pointer;
     margin-top: 20px;
     display: block;
@@ -94,6 +94,44 @@ button {
 button:hover {
     background-color: #e67e22;
     transform: scale(1.02); 
+}
+
+/* Loading Indicator Styles */
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 50px;
+    display: none; /* Hidden by default */
+}
+
+.loading-indicator p {
+    font-size: 16px; /* Adjust as needed */
+    color: #666666; /* Adjust as needed */
+    margin-right: 10px; /* Space between text and dots */
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    background-color: #FF7A00;
+    border-radius: 50%;
+    animation: dotFlashing 1s infinite linear alternate;
+}
+
+.dot2 {
+    animation-delay: 0.2s;
+}
+
+.dot3 {
+    animation-delay: 0.4s;
+}
+
+@keyframes dotFlashing {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 /* Progress Bar */
@@ -177,6 +215,72 @@ button:hover {
     #analysis-actions button {
       margin-right: 10px; /* Space out the buttons slightly */
     }
+
+    /* API Key Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    position: relative;
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 400px;
+}
+
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.close:hover, .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#api-key-input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    display: block;
+    border: 1px solid #e1e4e8;
+    border-radius: 4px;
+}
+
+/* Style the save button to match your existing button styles */
+.modal-content button {
+    background-color: #FF7A00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal-content button:hover {
+    background-color: #e67e22;
+    transform: scale(1.02);
+}
     </style>
 </head>
 <body>
@@ -185,7 +289,13 @@ button:hover {
             <img src="https://i.ibb.co/wJ0qs6b/Group-1.png" alt="Mach10 Logo" class="logo">
         </a>
     </div>
-
+    <div id="loadingIndicator" class="loading-indicator">
+      <p>Gathering your financial insights...</p>
+      <div class="dot dot1"></div>
+      <div class="dot dot2"></div>
+      <div class="dot dot3"></div>
+</div>
+</div>
     <div class="container">
         <h2>Startup Financial Model Analysis</h2>
         <div class="instructions">
@@ -196,13 +306,21 @@ button:hover {
             </ol>
             <p>If an error occurs, please check the data and try again.</p>
         </div>
-        <div class="progress-bar"></div>
         <div id="response" class="response">
-            <p class="start-prompt">Click "Start Analysis" to unlock real-time insights.</p>
+            <p class="start-prompt">Enter your OpenAI API Key below and click "Start Analysis" to unlock real-time insights.</p>
         </div>
+        <div class="progress-bar"></div>
         <button id="startAnalysisButton">Start Analysis</button>
+        </div>
+        <!-- API Key Modal -->
+    <div id="apiKeyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeApiKeyModal()">&times;</span>
+            <h3>Configure OpenAI API Key</h3>
+            <input type="text" id="api-key-input" placeholder="Enter OpenAI API Key" />
+            <button onclick="saveApiKey()">Save API Key</button>
+        </div>
     </div>
-
 <script>
 function debounce(func, wait) {
     let timeout;
@@ -220,8 +338,9 @@ function debounce(func, wait) {
     function showResponse(response) {
         const responseContainer = document.getElementById('response');
         responseContainer.innerHTML = response || 'No insights available. Please try again.';
-        // Hide the progress bar to indicate loading is complete.
+        // Hide the loading indicator and progress bar to indicate loading is complete.
         document.querySelector('.progress-bar').style.display = 'none';
+        document.getElementById('loadingIndicator').style.display = 'none';
         // Add success indicator only if there is a response.
         if (response) {
             const successIndicator = document.createElement('div');
@@ -239,6 +358,7 @@ function debounce(func, wait) {
         responseContainer.innerHTML = `<p class="error-message">Error: ${errorMessage}</p>`;
         // Hide the progress bar since an error occurred and loading is complete.
         document.querySelector('.progress-bar').style.display = 'none';
+        document.getElementById('loadingIndicator').style.display = 'none';
     }
 
     // This debounced function calls the server-side function to start the financial analysis.
@@ -249,11 +369,81 @@ function debounce(func, wait) {
             .startFinancialAnalysis(); // Ensure this matches the server-side function name.
     }, 300);
 
-    // This event listener is attached to the "Start Analysis" button.
-    document.getElementById('startAnalysisButton').addEventListener('click', function() {
-        document.querySelector('.progress-bar').style.display = 'block'; // Show the progress bar indicating loading.
-        debouncedStartAnalysis(); // Call the debounced function to start the analysis.
-    });
+// Event listener for the "Start Analysis" button
+document.getElementById('startAnalysisButton').addEventListener('click', function() {
+    // Hide previous response and show the loading indicator
+    document.querySelector('.response').style.display = 'none';
+    document.getElementById('loadingIndicator').style.display = 'block';
+    
+    // Check if the API Key is set before starting analysis
+    google.script.run.withSuccessHandler(function(apiKey) {
+        if (apiKey) {
+            // If API Key exists, proceed with the analysis
+            debouncedStartAnalysis();
+        } else {
+            // If no API Key found, prompt user to input it
+            openApiKeyModal();
+        }
+    }).getOpenAiApiKey();
+});
+
+// Save API Key to User Properties
+function saveApiKey() {
+    var apiKey = document.getElementById("api-key-input").value.trim();
+    if (apiKey) {
+        google.script.run.withSuccessHandler(function() {
+            alert("API Key saved successfully.");
+            closeApiKeyModal();
+            // Optionally start analysis immediately after saving the API key
+            debouncedStartAnalysis();
+        }).saveOpenAiApiKey(apiKey);
+    } else {
+        alert("Please enter a valid API Key.");
+    }
+}
+
+  document.getElementById('startAnalysisButton').addEventListener('click', function() {
+    // Attempt to start the analysis if the API Key is already set
+    // This function should first check if the API Key is set and then proceed
+    tryStartAnalysis();
+});
+
+function tryStartAnalysis() {
+    // Retrieve the API key from properties or a similar storage mechanism
+    var apiKey = google.script.run.withSuccessHandler(function(returnedApiKey) {
+        if(returnedApiKey) {
+            // If API Key exists, proceed with the analysis
+            startAnalysis(returnedApiKey); // Function to initiate analysis with the API Key
+        } else {
+            // If no API Key found, prompt user to input it
+            openApiKeyModal();
+        }
+    }).getOpenAiApiKey(); // Replace 'getOpenAiApiKey' with the actual function name that retrieves the API Key
+}
+
+function startAnalysis(apiKey) {
+    // Hide previous responses and display loading indicator
+    document.getElementById('loadingIndicator').style.display = 'block';
+    document.querySelector('.response').style.display = 'none';
+
+    // Here you will call the server-side function to start the analysis
+    // Pass the apiKey as a parameter or ensure it's accessible where needed
+    google.script.run
+        .withSuccessHandler(showResponse) // Set showResponse as the success handler
+        .withFailureHandler(showError) // Set showError as the failure handler
+        .startFinancialAnalysis(apiKey); // Adjust with actual server-side function
+}
+
+    // Show API key modal on startup or provide a dedicated button
+    openApiKeyModal();
+});
+
+    window.onclick = function(event) {
+        var modal = document.getElementById("apiKeyModal");
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
     </script>
 </body>
 </html>
