@@ -16,13 +16,10 @@ Page.html: The HTML framework for the sidebar UI, dictating the structural and s
 # Usage
 To integrate the Financial Model GPT into your Google Sheets, follow these detailed steps:
 
-Access the Script:
-
-Visit the provided shared link to open the Google Sheet that contains the embedded Financial Model GPT script.
+Access the Script: Visit the provided shared link to open the Google Sheet that contains the embedded Financial Model GPT script.
 Access Script Here: https://docs.google.com/spreadsheets/d/1sQppbz_CBaBpqpX94lRArzjjdBbPFLyd6_ZxH-vehbo/edit?usp=sharing 
-Copy the Sheet for Personal Use:
 
-In the Google Sheets interface, select File > Make a copy.
+Copy the Sheet for Personal Use: In the Google Sheets interface, select File > Make a copy.
 Save the copy to your personal Google Drive. This step ensures you have a personal and editable version of the tool.
 Authorize and Authenticate the Script:
 
