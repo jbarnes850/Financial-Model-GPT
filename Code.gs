@@ -138,7 +138,7 @@ function constructPrompt(financialModelData) {
     `Burn Multiple: ${financialModelData.burnMultiple.join(", ")}\n` +
     `Remaining Months of Runway: ${financialModelData.remainingMonthsOfRunway.join(", ")}\n` +
     `Average Contract Value: ${financialModelData.averageContractValue.join(", ")}\n` +
-    `You are an expert coach to startup founders. Assess the financial health and growth potential of an early-stage, pre-seed to seed SaaS startup based on a 3-year financial forecast model. Benchmark the startup's financial performance against typical industry standards for early-stage startups. The financial model includes a range of metrics such as monthly revenue, growth rate, gross margin, and more.\n\n` +
+    `You are an expert financial coach to startup founders. Assess the financial health and growth potential of an early-stage, pre-seed to seed SaaS startup based on a 3-year financial forecast model. Benchmark the startup's financial performance against typical industry standards for early-stage startups. The financial model includes a range of metrics such as monthly revenue, growth rate, gross margin, and more.\n\n` +
     `Net Revenue Retention: ${financialModelData.netRevenueRetention.join(", ")}\n` +
     `User Retention: ${financialModelData.userRetention.join(", ")}\n` +
     `CAC Payback in Months: ${financialModelData.cacPaybackInMonths.join(", ")}\n\n` +
@@ -146,7 +146,7 @@ function constructPrompt(financialModelData) {
     `1. Analyze the startup's financial health, considering the revenue, margins, burn rate, and retention metrics.\n` +
     `2. Evaluate the startup's growth trajectory and investment efficiency, taking into account the revenue growth rate, burn multiple, and runway.\n` +
     `3. Provide concise strategic recommendations for optimizing the startup's financial model and improving key metrics to better align with successful industry standards.\n\n` +
-    `Be kind and encouraging. Write as if you are writing to a fellow founder. Deliver your analysis with actionable insights and detailed suggestions based on the provided data and industry benchmarks.`;
+    `Be kind and encouraging. Deliver your analysis with actionable insights and detailed suggestions based on the provided data and industry benchmarks.`;
     // Log the constructed prompt for debugging
     Logger.log("Constructed Prompt: " + prompt);
     return prompt; // Return the constructed prompt
@@ -205,6 +205,11 @@ function getGptApiResponse(prompt, successCallback, errorCallback) {
 function showResultsInPopup(result) {
     var formattedResult = result.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
 
+    // Split result into paragraphs at each double newline and wrap with <p> tags
+    var paragraphs = formattedResult.split('\n\n')
+                      .map(paragraph => `<p>${paragraph.trim()}</p>`)
+                      .join('');
+
     var htmlContent = `
         <style>
             /* Popup Container Style */
@@ -224,15 +229,16 @@ function showResultsInPopup(result) {
             .chat-content {
                 width: 100%;
                 max-height: 80vh;
-                padding: 20px;
+                padding: 25px;
+                margin: 10px 0;
                 border-radius: 8px;
                 background-color: #f9f9f9; /* Light grey background similar to response */
                 box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Subtle shadow like chat GPT */
                 overflow-y: auto;
                 font-family: 'Space Grotesk', sans-serif;
-                font-size: 15px; /* Slightly smaller font for readability */
-                line-height: 1.7; /* Increased line height for better spacing */
-                color: #333; /* Darker text color for contrast */
+                font-size: 15px;
+                line-height: 2; 
+                color: #333; 
             }
 
             /* Scrollbar style for chat content */
@@ -251,7 +257,7 @@ function showResultsInPopup(result) {
         </style>
 
         <div class="popup-container">
-            <div class="chat-content">${formattedResult}</div>
+            <div class="chat-content">${paragraphs}</div>
         </div>
     `;
 
@@ -279,10 +285,40 @@ function handleApiError(error) {
 
 /**
  * Function called when the spreadsheet is opened. Adds custom menu items.
+ * Automatically shows the sidebar for new users to enter the OpenAI API key.
  */
 function onOpen() {
     var ui = SpreadsheetApp.getUi();
     ui.createMenu('Financial Analysis')
         .addItem('Start Analysis', 'startFinancialAnalysis')
+        .addItem('Enter API Key', 'showSidebarWithApiKeyInput')
         .addToUi();
+    
+    // Check if the OpenAI API key has been set
+    var apiKey = getOpenAiApiKey();
+
+    // If the API key is not set, show the sidebar for the user to enter it
+    if (!apiKey) {
+        showSidebarWithApiKeyInput();
+    }
+}
+  
+    // Check if the API key is already set and show the sidebar if it isn't
+    var apiKey = PropertiesService.getScriptProperties().getProperty('OPENAI_API_KEY');
+    if (!apiKey) {
+        showSidebarWithApiKeyInput();
+    }
+
+// Shows a sidebar with input for the OpenAI API key
+function showSidebarWithApiKeyInput() {
+    var htmlOutput = HtmlService.createHtmlOutputFromFile('Page')
+        .setTitle('Enter OpenAI API Key')
+        .setWidth(300);
+    SpreadsheetApp.getUi().showSidebar(htmlOutput);
+}
+
+// Saves the API Key in script properties
+function saveOpenAiApiKey(apiKey) {
+    var scriptProperties = PropertiesService.getScriptProperties();
+    scriptProperties.setProperty('OPENAI_API_KEY', apiKey);
 }
